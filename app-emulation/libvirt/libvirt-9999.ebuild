@@ -12,7 +12,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..14} )
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/libvirt.org.asc
-inherit meson linux-info python-any-r1 readme.gentoo-r1 tmpfiles verify-sig
+inherit meson-multilib bash-completion-r1 linux-info python-any-r1 readme.gentoo-r1 tmpfiles verify-sig
 
 if [[ ${PV} = *9999* ]]; then
 	inherit git-r3
@@ -63,30 +63,30 @@ BDEPEND="
 RDEPEND="
 	acct-user/qemu
 	app-misc/scrub
-	>=dev-libs/glib-2.66.0
-	dev-libs/libgcrypt
-	dev-libs/libnl:3
-	>=dev-libs/libxml2-2.9.1:=
+	>=dev-libs/glib-2.66.0[${MULTILIB_USEDEP}]
+	dev-libs/libgcrypt[${MULTILIB_USEDEP}]
+	dev-libs/libnl:3[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.1:=[${MULTILIB_USEDEP}]
 	>=net-analyzer/openbsd-netcat-1.105-r1
-	>=net-libs/gnutls-3.2.0:=
-	net-libs/libtirpc:=
-	>=net-misc/curl-7.18.0
-	sys-apps/dbus
+	>=net-libs/gnutls-3.2.0:=[${MULTILIB_USEDEP}]
+	net-libs/libtirpc:=[${MULTILIB_USEDEP}]
+	>=net-misc/curl-7.18.0[${MULTILIB_USEDEP}]
+	sys-apps/dbus[${MULTILIB_USEDEP}]
 	sys-apps/dmidecode
-	sys-devel/gettext
-	>=sys-libs/readline-7.0:=
+	sys-devel/gettext[${MULTILIB_USEDEP}]
+	>=sys-libs/readline-7.0:=[${MULTILIB_USEDEP}]
 	virtual/acl
 	apparmor? ( sys-libs/libapparmor )
-	audit? ( sys-process/audit )
+	audit? ( sys-process/audit[${MULTILIB_USEDEP}] )
 	caps? ( sys-libs/libcap-ng )
 	dtrace? ( dev-debug/systemtap )
 	firewalld? ( >=net-firewall/firewalld-0.6.3 )
-	fuse? ( sys-fs/fuse:= )
+	fuse? ( sys-fs/fuse:=[${MULTILIB_USEDEP}] )
 	glusterfs? ( >=sys-cluster/glusterfs-3.4.1 )
 	iscsi? ( >=sys-block/open-iscsi-1.18.0 )
 	iscsi-direct? ( >=net-libs/libiscsi-1.18.0 )
-	libssh? ( >=net-libs/libssh-0.8.1:= )
-	libssh2? ( >=net-libs/libssh2-1.3 )
+	libssh? ( >=net-libs/libssh-0.8.1:=[${MULTILIB_USEDEP}] )
+	libssh2? ( >=net-libs/libssh2-1.3[${MULTILIB_USEDEP}] )
 	lvm? ( >=sys-fs/lvm2-2.02.48-r2[lvm] )
 	lxc? ( !sys-apps/systemd[cgroup-hybrid(-)] )
 	nbd? (
@@ -95,14 +95,14 @@ RDEPEND="
 	)
 	nfs? ( net-fs/nfs-utils )
 	numa? (
-		>sys-process/numactl-2.0.2
+		>sys-process/numactl-2.0.2[${MULTILIB_USEDEP}]
 		sys-process/numad
 	)
 	parted? (
 		>=sys-block/parted-1.8[device-mapper]
 		sys-fs/lvm2[lvm]
 	)
-	pcap? ( >=net-libs/libpcap-1.8.0 )
+	pcap? ( >=net-libs/libpcap-1.8.0[${MULTILIB_USEDEP}] )
 	policykit? (
 		acct-group/libvirt
 		>=sys-auth/polkit-0.9
@@ -113,8 +113,8 @@ RDEPEND="
 		dev-libs/json-c:=
 	)
 	rbd? ( sys-cluster/ceph )
-	sasl? ( >=dev-libs/cyrus-sasl-2.1.26 )
-	selinux? ( >=sys-libs/libselinux-2.0.85 )
+	sasl? ( >=dev-libs/cyrus-sasl-2.1.26[${MULTILIB_USEDEP}] )
+	selinux? ( >=sys-libs/libselinux-2.0.85[${MULTILIB_USEDEP}] )
 	virt-network? (
 		net-dns/dnsmasq[dhcp,ipv6(+),script]
 		net-firewall/ebtables
@@ -133,8 +133,8 @@ RDEPEND="
 		app-emulation/xen-tools:=
 	)
 	udev? (
-		virtual/libudev:=
-		>=x11-libs/libpciaccess-0.10.9
+		virtual/libudev:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libpciaccess-0.10.9[${MULTILIB_USEDEP}]
 	)
 	zfs? ( sys-fs/zfs )
 	kernel_linux? ( sys-apps/util-linux )"
@@ -240,7 +240,7 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 }
 
-src_prepare() {
+multilib_src_prepare() {
 	touch "${S}/.mailmap" || die
 
 	default
@@ -257,7 +257,7 @@ src_prepare() {
 		-i "${S}/libvirtd.init" || die "sed failed"
 }
 
-src_configure() {
+multilib_src_configure() {
 	local emesonargs=(
 		$(meson_feature apparmor)
 		$(meson_feature apparmor apparmor_profiles)
@@ -328,7 +328,7 @@ src_configure() {
 	meson_src_configure
 }
 
-src_test() {
+multilib_src_test() {
 	export VIR_TEST_DEBUG=1
 	# Don't run the syntax check tests, they're fragile and not relevant
 	# to us downstream anyway.
@@ -337,7 +337,7 @@ src_test() {
 	meson_src_test --no-suite syntax-check --timeout-multiplier 10
 }
 
-src_install() {
+multilib_src_install() {
 	meson_src_install
 
 	# Depending on configuration option, libvirt will create some bogus
