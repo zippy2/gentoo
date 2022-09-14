@@ -78,16 +78,16 @@ RDEPEND="
 	virtual/acl
 	apparmor? ( sys-libs/libapparmor )
 	audit? ( sys-process/audit[${MULTILIB_USEDEP}] )
-	caps? ( sys-libs/libcap-ng )
+	caps? ( sys-libs/libcap-ng[${MULTILIB_USEDEP}] )
 	dtrace? ( dev-debug/systemtap )
 	firewalld? ( >=net-firewall/firewalld-0.6.3 )
 	fuse? ( sys-fs/fuse:=[${MULTILIB_USEDEP}] )
-	glusterfs? ( >=sys-cluster/glusterfs-3.4.1 )
+	glusterfs? ( >=sys-cluster/glusterfs-3.4.1[${MULTILIB_USEDEP}] )
 	iscsi? ( >=sys-block/open-iscsi-1.18.0 )
-	iscsi-direct? ( >=net-libs/libiscsi-1.18.0 )
+	iscsi-direct? ( >=net-libs/libiscsi-1.18.0[${MULTILIB_USEDEP}] )
 	libssh? ( >=net-libs/libssh-0.8.1:=[${MULTILIB_USEDEP}] )
 	libssh2? ( >=net-libs/libssh2-1.3[${MULTILIB_USEDEP}] )
-	lvm? ( >=sys-fs/lvm2-2.02.48-r2[lvm] )
+	lvm? ( >=sys-fs/lvm2-2.02.48-r2[lvm,${MULTILIB_USEDEP}] )
 	lxc? ( !sys-apps/systemd[cgroup-hybrid(-)] )
 	nbd? (
 		sys-block/nbdkit
@@ -105,14 +105,14 @@ RDEPEND="
 	pcap? ( >=net-libs/libpcap-1.8.0[${MULTILIB_USEDEP}] )
 	policykit? (
 		acct-group/libvirt
-		>=sys-auth/polkit-0.9
+		>=sys-auth/polkit-0.9[${MULTILIB_USEDEP}]
 	)
 	qemu? (
 		>=app-emulation/qemu-4.2
 		app-crypt/swtpm
 		dev-libs/json-c:=
 	)
-	rbd? ( sys-cluster/ceph )
+	rbd? ( sys-cluster/ceph[${MULTILIB_USEDEP}] )
 	sasl? ( >=dev-libs/cyrus-sasl-2.1.26[${MULTILIB_USEDEP}] )
 	selinux? ( >=sys-libs/libselinux-2.0.85[${MULTILIB_USEDEP}] )
 	virt-network? (
@@ -127,7 +127,7 @@ RDEPEND="
 	)
 	virtiofsd? ( app-emulation/virtiofsd )
 	virtualbox? ( <app-emulation/virtualbox-7.1.0 )
-	wireshark-plugins? ( >=net-analyzer/wireshark-2.6.0:= )
+	wireshark-plugins? ( >=net-analyzer/wireshark-2.6.0:=[${MULTILIB_USEDEP}] )
 	xen? (
 		>=app-emulation/xen-4.9.0
 		app-emulation/xen-tools:=
