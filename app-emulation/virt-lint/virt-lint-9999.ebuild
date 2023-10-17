@@ -5,41 +5,21 @@
 
 EAPI=8
 
+if [[ ${PV} != *9999 ]]; then
 CRATES="
-	aho-corasick@1.1.2
 	anstream@0.5.0
 	anstyle@1.0.3
 	anstyle-parse@0.2.1
 	anstyle-query@1.0.0
 	anstyle-wincon@2.1.0
-	bindgen@0.63.0
-	bitflags@1.3.2
-	bitflags@2.4.0
-	cexpr@0.6.0
-	cfg-if@1.0.0
-	clang-sys@1.6.1
 	clap@4.4.4
 	clap_builder@4.4.4
 	clap_derive@4.4.2
 	clap_lex@0.5.1
 	colorchoice@1.0.0
-	either@1.9.0
 	enum-display-derive@0.1.1
-	errno@0.3.5
-	glob@0.3.1
 	heck@0.4.1
-	home@0.5.5
-	lazy_static@1.4.0
-	lazycell@1.3.0
 	libc@0.2.148
-	libloading@0.7.4
-	linux-raw-sys@0.4.10
-	log@0.4.20
-	memchr@2.6.4
-	minimal-lexical@0.2.1
-	nom@7.1.3
-	once_cell@1.18.0
-	peeking_take_while@0.1.2
 	peresil@0.3.0
 	pkg-config@0.3.27
 	pkg-version@1.0.0
@@ -48,13 +28,6 @@ CRATES="
 	proc-macro2@1.0.67
 	quick-error@1.2.3
 	quote@1.0.33
-	regex@1.10.0
-	regex-automata@0.4.1
-	regex-syntax@0.8.0
-	rustc-hash@1.1.0
-	rustix@0.38.18
-	shlex@1.2.0
-	stdint@0.2.0
 	strsim@0.10.0
 	sxd-document@0.3.2
 	sxd-xpath@0.4.2
@@ -65,10 +38,6 @@ CRATES="
 	typed-arena@1.7.0
 	unicode-ident@1.0.12
 	utf8parse@0.2.1
-	which@4.4.2
-	winapi@0.3.9
-	winapi-i686-pc-windows-gnu@0.4.0
-	winapi-x86_64-pc-windows-gnu@0.4.0
 	windows-sys@0.48.0
 	windows-targets@0.48.5
 	windows_aarch64_gnullvm@0.48.5
@@ -79,20 +48,30 @@ CRATES="
 	windows_x86_64_gnullvm@0.48.5
 	windows_x86_64_msvc@0.48.5
 "
+fi
 
-inherit cargo git-r3
+declare -A GIT_CRATES=(
+	[virt]="https://gitlab.com/libvirt/libvirt-rust.git;c7ee11c7585897f343d1c5ca9adc344bd9d21007;cargo_home/git/checkouts/libvirt-rust-a02c7639fc7cb7e7/c7ee11c/"
+)
+
+inherit edo cargo
 
 DESCRIPTION="Virtualization linting library"
 HOMEPAGE="https://gitlab.com/MichalPrivoznik/virt-lint"
-EGIT_REPO_URI="https://gitlab.com/MichalPrivoznik/virt-lint"
+
+if [[ ${PV} == *9999 ]] ; then
+	EGIT_REPO_URI="https://gitlab.com/MichalPrivoznik/virt-lint"
+	inherit git-r3
+else
+	SRC_URI="https://gitlab.com/MichalPrivoznik/virt-lint/-/archive/v${PV}/libvirt-v${PV}.tar.bz2 -> ${P}.tar.bz2
+		$(cargo_crate_uris ${CRATES})"
+	KEYWORDS="~amd64 ~x86"
+fi
 
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture
 LICENSE="0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD BSD-2 ISC LGPL-2.1 LGPL-3+ MIT Unicode-DFS-2016 Unlicense"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-
-MY_SRC_CONF_ARGS=()
 
 DEPEND=""
 RDEPEND="${DEPEND}"
@@ -104,31 +83,40 @@ BDEPEND="
 QA_FLAGS_IGNORED="usr/bin/${PN}"
 
 src_unpack() {
-	git-r3_src_unpack
-	cargo_live_src_unpack
-}
-
-src_configure() {
-	cargo_src_configure "${MY_SRC_CONF_ARGS[@]}"
-	default
+	if [[ ${PV} == *9999* ]]; then
+		git-r3_src_unpack
+		cargo_live_src_unpack
+	else
+		default
+		cargo_src_unpack
+	fi
 }
 
 src_compile() {
 	export CARGO_HOME="${ECARGO_HOME}"
-	local args=$(usex debug "" --release)
+	local cargoargs=(
+		--library-type=cdylib
+		--prefix=/usr
+		--libdir="/usr/$(get_libdir)"
+		$(usev !debug '--release')
+	)
 
 	cargo_src_compile
 
-	cargo cbuild ${args} --prefix="/usr" --libdir="/usr/$(get_libdir)" \
-		|| die "cargo cbuild failed"
+	edo cargo cbuild "${cargoargs[@]}"
 }
 
 src_install() {
 	export CARGO_HOME="${ECARGO_HOME}"
-	local args=$(usex debug "" --release)
+	local cargoargs=(
+		--library-type=cdylib
+		--prefix=/usr
+		--libdir="/usr/$(get_libdir)"
+		--destdir="${ED}"
+		$(usev !debug '--release')
+	)
 
 	cargo_src_install --path ./tools
 
-	cargo cinstall ${args} --prefix="/usr" --libdir="/usr/$(get_libdir)" --destdir="${ED}" \
-		|| die "cargo cinstall failed"
+	edo cargo cinstall "${cargoargs[@]}"
 }
