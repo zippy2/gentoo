@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit prefix
+inherit bash-completion-r1 prefix
 
 DESCRIPTION="User land tool for cleaning up old perl installs"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:Perl"
@@ -39,6 +39,7 @@ src_prepare() {
 }
 
 src_install() {
+	newbashcomp perl-cleaner.bash perl-cleaner
 	dosbin perl-cleaner
 	doman perl-cleaner.1
 }
