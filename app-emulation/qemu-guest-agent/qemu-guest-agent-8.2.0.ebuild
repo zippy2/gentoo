@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{10..13} )
 PYTHON_REQ_USE="ensurepip(-),ncurses,readline"
 
-inherit edo systemd toolchain-funcs python-any-r1 udev
+inherit edo linux-info python-any-r1 systemd toolchain-funcs udev
 
 MY_PN="qemu"
 MY_P="${MY_PN}-${PV}"
@@ -31,6 +31,13 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}"/qemu-8.1.0-find-sphinx.patch
 )
+
+pkg_setup() {
+	# While qemu-ga supports multiple modes, virtio-serial is the
+	# default. Make sure it's enabled in kernel.
+	CONFIG_CHECK="~VIRTIO_CONSOLE"
+	linux-info_pkg_setup
+}
 
 src_configure() {
 	tc-export AR LD OBJCOPY RANLIB
