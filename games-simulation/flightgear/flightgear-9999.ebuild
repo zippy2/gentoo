@@ -7,7 +7,7 @@ inherit cmake flag-o-matic toolchain-funcs git-r3
 
 DESCRIPTION="Open Source Flight Simulator"
 HOMEPAGE="https://www.flightgear.org/"
-EGIT_REPO_URI="https://git.code.sf.net/p/${PN}/${PN}"
+EGIT_REPO_URI="https://gitlab.com/${PN}/${PN}.git"
 EGIT_BRANCH="next"
 
 LICENSE="GPL-2"
@@ -35,11 +35,11 @@ COMMON_DEPEND="
 	dbus? ( >=sys-apps/dbus-1.6.18-r1 )
 	gdal? ( >=sci-libs/gdal-2.0.0:= )
 	qt5? (
-		>=dev-qt/qtcore-5.7.1:5
-		>=dev-qt/qtdeclarative-5.7.1:5
-		>=dev-qt/qtgui-5.7.1:5
-		>=dev-qt/qtnetwork-5.7.1:5
-		>=dev-qt/qtwidgets-5.7.1:5
+		>=dev-qt/qtcore-5.12.1:5
+		>=dev-qt/qtdeclarative-5.12.1:5
+		>=dev-qt/qtgui-5.12.1:5
+		>=dev-qt/qtnetwork-5.12.1:5
+		>=dev-qt/qtwidgets-5.12.1:5
 	)
 	udev? ( virtual/udev )
 	utils? (
@@ -48,7 +48,7 @@ COMMON_DEPEND="
 		media-libs/glew:0
 		media-libs/libpng:0
 		virtual/opengl
-		qt5? ( >=dev-qt/qtwebsockets-5.7.1:5 )
+		qt5? ( >=dev-qt/qtwebsockets-5.12.1:5 )
 	)
 "
 # libXi and libXmu are build-only-deps according to FindGLUT.cmake
@@ -63,11 +63,7 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	~games-simulation/${PN}-data-${PV}
 "
-BDEPEND="qt5? ( >=dev-qt/linguist-tools-5.7.1:5 )"
-
-PATCHES=(
-	"${FILESDIR}/${PN}-2020.3.5-cmake.patch"
-)
+BDEPEND="qt5? ( >=dev-qt/linguist-tools-5.12.1:5 )"
 
 DOCS=(AUTHORS ChangeLog NEWS README Thanks)
 
@@ -99,19 +95,17 @@ src_configure() {
 		-DENABLE_IAX=$(usex utils)
 		-DENABLE_JS_DEMO=$(usex utils)
 		-DENABLE_JSBSIM=ON
-		-DENABLE_LARCSIM=ON
 		-DENABLE_METAR=$(usex utils)
 		-DENABLE_OPENMP=$(usex openmp)
 		-DENABLE_PLIB_JOYSTICK=ON # NOTE look for defaults changes in CMake
 		-DENABLE_PROFILE=OFF
 		-DENABLE_QT=$(usex qt5)
+		-DCHECK_FOR_QT6=OFF # NOTE lift when QT6 is packaged
 		-DENABLE_RTI=OFF
 		-DENABLE_SIMD=$(usex cpu_flags_x86_sse2)
 		-DENABLE_STGMERGE=ON
 		-DENABLE_SWIFT=OFF # swift pilot client not packaged yet
 		-DENABLE_TERRASYNC=$(usex utils)
-		-DENABLE_TRAFFIC=$(usex utils)
-		-DENABLE_UIUC_MODEL=ON
 		-DENABLE_YASIM=ON
 		-DEVENT_INPUT=$(usex udev)
 		-DFG_BUILD_TYPE=Nightly
