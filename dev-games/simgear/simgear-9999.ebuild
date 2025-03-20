@@ -7,7 +7,7 @@ inherit cmake toolchain-funcs git-r3
 
 DESCRIPTION="Development library for simulation games"
 HOMEPAGE="https://www.flightgear.org/"
-EGIT_REPO_URI="https://git.code.sf.net/p/flightgear/${PN}"
+EGIT_REPO_URI="https://gitlab.com/flightgear/${PN}.git"
 EGIT_BRANCH="next"
 
 LICENSE="GPL-2"
@@ -35,8 +35,6 @@ RDEPEND="${COMMON_DEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-2019.1.1-gdal3.patch"
-	"${FILESDIR}/${PN}-2020.1.2-do-not-assume-libc++-clang.patch"
 )
 
 pkg_pretend() {
