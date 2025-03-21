@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person" proxied="yes">
+		<email>michal.privoznik@gmail.com</email>
+		<name>Michal Privoznik</name>
+	</maintainer>
+	<maintainer type="project" proxied="proxy">
+		<email>proxy-maint@gentoo.org</email>
+		<name>Proxy Maintainers</name>
+	</maintainer>
+	<maintainer type="project">
+		<email>games@gentoo.org</email>
+		<name>Gentoo Games Project</name>
+	</maintainer>
+	<longdescription lang="en">
+        Because the OSG project is no longer officially maintained, current
+        versions of FlightGear require a forked version of OSG that comes with
+		several improvements and fixes.
+	</longdescription>
+	<use>
+		<flag name="collada">Enable DAE file support via <pkg>dev-libs/collada-dom</pkg></flag>
+		<flag name="dicom">Enable DICOM medical image file support via <pkg>sci-libs/dcmtk</pkg></flag>
+		<flag name="fox">Build examples using <pkg>x11-libs/fox</pkg> library</flag>
+		<flag name="gdal">Enable support for <pkg>sci-libs/gdal</pkg> library</flag>
+		<flag name="las">Enable support for geospatial data LAS LiDAR format using <pkg>sci-geosciences/liblas</pkg></flag>
+		<flag name="openinventor">Build OpenInventor plugin</flag>
+		<flag name="osgapps">Build osg applications</flag>
+		<flag name="sdl2">Use <pkg>media-libs/libsdl2</pkg> additionally to <pkg>media-libs/libsdl</pkg></flag>
+		<flag name="xrandr">Enable support for the X xrandr extension</flag>
+	</use>
+	<upstream>
+		<remote-id type="gitlab">flightgear/openscenegraph</remote-id>
+	</upstream>
+</pkgmetadata>
