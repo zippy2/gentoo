@@ -19,12 +19,22 @@ fi
 DESCRIPTION="library used implement a virtual 3D GPU used by qemu"
 HOMEPAGE="https://virgil3d.github.io/"
 
+# TODO add msm
+VIDEO_CARDS="amdgpu"
+for card in ${VIDEO_CARDS}; do
+	IUSE_VIDEO_CARDS+=" video_cards_${card}"
+done
+
 LICENSE="MIT"
 SLOT="0"
-IUSE="static-libs"
+IUSE="${IUSE_VIDEO_CARDS} video static-libs"
 
 RDEPEND="
 	>=x11-libs/libdrm-2.4.50
+	video_cards_amdgpu? (
+		>=x11-libs/libdrm-2.4.121[video_cards_amdgpu]
+	)
+	video ? (media-libs/libva)
 	media-libs/libepoxy"
 
 DEPEND="${RDEPEND}"
@@ -36,6 +46,8 @@ RESTRICT="test"
 src_configure() {
 	local emesonargs=(
 		-Ddefault_library=$(usex static-libs both shared)
+		-Dvenus=
+		-Dvideo$(usex video)
 	)
 
 	meson_src_configure
